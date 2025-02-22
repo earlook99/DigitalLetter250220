@@ -33,6 +33,9 @@ private:
 
 	UFUNCTION()
 	void HandleDocentOverlapChanged(bool bIsOverlapping);
+
+	UFUNCTION()
+	void HandlePlayerInteracted();
 	
 	UPROPERTY(EditAnywhere)
 	ADocentCharacter* DocentCharacter;

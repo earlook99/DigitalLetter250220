@@ -46,6 +46,7 @@ void APlayerCharacter::Interact()
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Interact!"));
+	OnPlayerInteracted.Broadcast();
 }
 
 void APlayerCharacter::AllowDocentInteraction(bool bAllow)

@@ -8,6 +8,8 @@
 
 struct FInputActionValue;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerInteracted);
+
 UCLASS()
 class DIGITALLETTER250220_API APlayerCharacter : public ACharacter
 {
@@ -22,6 +24,8 @@ public:
 	void Interact();
 
 	void AllowDocentInteraction(bool bAllow);
+
+	FOnPlayerInteracted OnPlayerInteracted;
 
 protected:
 	// Called when the game starts or when spawned

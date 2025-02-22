@@ -23,6 +23,7 @@ void ADocentFlowManager::BeginPlay()
 	{
 		DocentCharacter->OnDocentMoveCompleted.AddDynamic(this, &ADocentFlowManager::HandleDocentMoveCompleted);
 		DocentCharacter->OnDocentOverlapChanged.AddDynamic(this, &ADocentFlowManager::HandleDocentOverlapChanged);
+		PlayerCharacter->OnPlayerInteracted.AddDynamic(this, &ADocentFlowManager::HandlePlayerInteracted);
 	}
 }
 
@@ -35,19 +36,25 @@ void ADocentFlowManager::Tick(float DeltaTime)
 
 void ADocentFlowManager::HandleDocentMoveCompleted()
 {
-	DocentPointIndex++;
-	if (DocentPointIndex < DocentPoints.Num())
-	{
-		DocentCharacter->MoveToDocentPoint(DocentPoints[DocentPointIndex]);
-	}
-	else
-	{
-		// TODO: Tour End
-	}
+	DocentCharacter->SetDocentState(EDocentState::Wait);
 }
 
 void ADocentFlowManager::HandleDocentOverlapChanged(bool bIsOverlapping)
 {
 	PlayerCharacter->AllowDocentInteraction(bIsOverlapping);
+}
+
+void ADocentFlowManager::HandlePlayerInteracted()
+{
+	if (DocentPointIndex < DocentPoints.Num())
+	{
+		DocentCharacter->SetDocentState(EDocentState::Moving);
+		DocentCharacter->MoveToDocentPoint(DocentPoints[DocentPointIndex]);
+		DocentPointIndex++;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Tour End"));
+	}
 }
 
