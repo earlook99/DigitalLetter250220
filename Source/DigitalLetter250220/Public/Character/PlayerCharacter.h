@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
+struct FInputActionValue;
+
 UCLASS()
 class DIGITALLETTER250220_API APlayerCharacter : public ACharacter
 {
@@ -14,6 +16,10 @@ class DIGITALLETTER250220_API APlayerCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
+
+	void Move(const FInputActionValue& Value);
+	void Look(const FInputActionValue& Value);
+	void Interact();
 
 	void AllowDocentInteraction(bool bAllow);
 
@@ -24,9 +30,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
 	bool bIsInteractableWithDocent = false;
