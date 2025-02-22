@@ -2,33 +2,65 @@
 
 
 #include "Character/DocentCharacter.h"
+#include "Components/SphereComponent.h"
+#include "Core/DocentAIController.h"
+#include "Engine/TargetPoint.h"
 
-// Sets default values
 ADocentCharacter::ADocentCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	DocentMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Docent Mesh"));
+	DocentMesh->SetupAttachment(RootComponent);
+
+	InteractionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Interaction Sphere"));
+	InteractionSphere->SetupAttachment(RootComponent);
+
+	InteractionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	InteractionSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+	InteractionSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 }
 
-// Called when the game starts or when spawned
 void ADocentCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	AIController = Cast<ADocentAIController>(GetController());
+
+	CurrentState = EDocentState::Wait;
+
+	if (InteractionSphere)
+	{
+		InteractionSphere->OnComponentBeginOverlap.AddDynamic(this, &ADocentCharacter::OnSphereOverlapBegin);
+		InteractionSphere->OnComponentEndOverlap.AddDynamic(this, &ADocentCharacter::OnSphereOverlapEnd);
+	}
 }
 
-// Called every frame
-void ADocentCharacter::Tick(float DeltaTime)
+void ADocentCharacter::SetDocentState(EDocentState NewState)
 {
-	Super::Tick(DeltaTime);
-
+	CurrentState = NewState;
 }
 
-// Called to bind functionality to input
-void ADocentCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ADocentCharacter::MoveToDocentPoint(ATargetPoint* DocentPoint)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	AIController->MoveToActor(DocentPoint);
 }
 
+void ADocentCharacter::NotifyMoveCompleted()
+{
+	OnDocentMoveCompleted.Broadcast();
+}
+
+void ADocentCharacter::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	UE_LOG(LogTemp, Log, TEXT("Overlap Begin with %s"), *OtherActor->GetName());
+
+	OnDocentOverlapChanged.Broadcast(true);
+}
+
+void ADocentCharacter::OnSphereOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	UE_LOG(LogTemp, Log, TEXT("Overlap End with %s"), *OtherActor->GetName());
+
+	OnDocentOverlapChanged.Broadcast(false);
+}
