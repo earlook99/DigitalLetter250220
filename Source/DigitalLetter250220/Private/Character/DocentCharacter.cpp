@@ -69,6 +69,7 @@ void ADocentCharacter::SetDocentState(EDocentState NewState)
 			break;
 		case EDocentState::Explaining:
 			DebugString = FString("Explaining");
+			InteractionSphere->SetGenerateOverlapEvents(false);
 			break;
 		default:
 			break;

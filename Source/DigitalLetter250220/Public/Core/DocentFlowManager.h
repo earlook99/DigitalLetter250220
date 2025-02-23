@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "DocentFlowManager.generated.h"
 
+struct FDocentDialogue;
+class UDialogueWidget;
 class APlayerCharacter;
 class ADocentCharacter;
 class ATargetPoint;
@@ -28,6 +30,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	void ShowDialogue(const FDocentDialogue& DialogueData);
+
+	UFUNCTION()
+	void OnDialogueFinished();
+	
 	UFUNCTION()
 	void HandleDocentMoveCompleted();
 
@@ -46,5 +53,16 @@ private:
 	UPROPERTY(EditAnywhere)
 	TArray<ATargetPoint*> DocentPoints;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UDialogueWidget> DialogueWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	UDataTable* DocentDialogueTable;
+
+	UPROPERTY()
+	UDialogueWidget* CurrentDialogueWidget;
+
 	int32 DocentPointIndex = 0;
+
+	int32 DocentDialogueIndex = 1;
 };

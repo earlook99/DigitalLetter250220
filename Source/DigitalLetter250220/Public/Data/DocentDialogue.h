@@ -1,23 +1,18 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "DocentLine.h"
 #include "DocentDialogue.generated.h"
 
 USTRUCT(BlueprintType)
-struct FDocentDialogue
+struct FDocentDialogue : public FTableRowBase
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Dialogue")
 	int32 DialogueID;
 
-	UPROPERTY(EditAnywhere)
-	FText DialogueText;
-
-	UPROPERTY(EditAnywhere)
-	bool bPlayExclamation;
-
-	UPROPERTY(EditAnywhere)
-	USoundBase* ExclamationSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Dialogue")
+	TArray<FDocentLine> Lines;
 };
